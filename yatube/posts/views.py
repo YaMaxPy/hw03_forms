@@ -33,8 +33,8 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-    post = Post.objects.get(pk=post_id)
-    username = User.objects.get(posts__pk=post_id)
+    post = get_object_or_404(Post, id=post_id)
+    username = get_object_or_404(User, posts__pk=post_id)
     posts_count = Post.objects.filter(author=username).count
     context = {
         'post': post,
@@ -46,7 +46,7 @@ def post_detail(request, post_id):
 def post_create(request):
     username = request.user.username
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST or None)
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.author = request.user
